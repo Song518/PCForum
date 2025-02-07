@@ -12,8 +12,8 @@ using PCForum.Data;
 namespace PCForum.Migrations
 {
     [DbContext(typeof(PCForumContext))]
-    [Migration("20250205173343_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250207180718_InitialMigrationV2")]
+    partial class InitialMigrationV2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,7 +71,8 @@ namespace PCForum.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("DiscussionId");
 

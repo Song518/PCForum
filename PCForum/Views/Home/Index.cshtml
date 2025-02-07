@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<PCForum.Models.Discussion>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +8,29 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<h2 class="mt-4">Recent Discussions</h2>
+
+@if (Model != null && Model.Any())
+{
+    @foreach (var item in Model)
+    {
+        <div class="discussion-item mb-3 p-3 border rounded">
+            <h3>
+                <a asp-controller="Discussions" asp-action="Details" asp-route-id="@item.DiscussionId">
+                    @item.Title
+                </a>
+            </h3>
+            <p>@item.Content</p>
+
+            @if (!string.IsNullOrEmpty(item.ImageFilename))
+            {
+                <img src="~/images/@item.ImageFilename" alt="Thumbnail" width="150" class="img-thumbnail" />
+            }
+        </div>
+    }
+}
+else
+{
+    <p>No discussions available.</p>
+}
