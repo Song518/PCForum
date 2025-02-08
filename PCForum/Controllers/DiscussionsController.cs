@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PCForum.Data;
 using PCForum.Models;
@@ -35,6 +34,7 @@ namespace PCForum.Controllers
 
             var discussion = await _context.Discussion
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
             if (discussion == null)
             {
                 return NotFound();
@@ -54,33 +54,27 @@ namespace PCForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFile")] Discussion discussion)
+        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFilename,ImageFile")] Discussion discussion)
         {
             if (ModelState.IsValid)
             {
                 if (discussion.ImageFile != null)
                 {
-                    
                     discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
 
-                    
                     string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
                     if (!Directory.Exists(uploadsFolder))
                     {
                         Directory.CreateDirectory(uploadsFolder);
                     }
 
-                    
                     string filePath = Path.Combine(uploadsFolder, discussion.ImageFilename);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await discussion.ImageFile.CopyToAsync(fileStream);
                     }
                 }
-                else
-                {
-                    discussion.ImageFilename = string.Empty; // 确保不为空
-                }
+
 
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
@@ -89,7 +83,6 @@ namespace PCForum.Controllers
 
             return View(discussion);
         }
-
 
         // GET: Discussions/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -104,10 +97,68 @@ namespace PCForum.Controllers
             {
                 return NotFound();
             }
+
             return View(discussion);
         }
 
-        
+        // POST: Discussions/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,ImageFile")] Discussion discussion)
+        {
+            if (id != discussion.DiscussionId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (discussion.ImageFile != null)
+                    {
+                        
+                        discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
+
+                        
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+
+                        
+                        string filePath = Path.Combine(uploadsFolder, discussion.ImageFilename);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await discussion.ImageFile.CopyToAsync(fileStream);
+                        }
+                    }
+
+                    _context.Update(discussion);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!DiscussionExists(discussion.DiscussionId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(discussion);
+        }
+
+
 
         // GET: Discussions/Delete/5
         public async Task<IActionResult> Delete(int? id)

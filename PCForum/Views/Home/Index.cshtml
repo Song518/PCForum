@@ -17,7 +17,8 @@
     {
         <div class="discussion-item mb-3 p-3 border rounded">
             <h3>
-                <a asp-controller="Discussions" asp-action="Details" asp-route-id="@item.DiscussionId">
+                
+                <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@item.DiscussionId">
                     @item.Title
                 </a>
             </h3>
@@ -27,6 +28,8 @@
             {
                 <img src="~/images/@item.ImageFilename" alt="Thumbnail" width="150" class="img-thumbnail" />
             }
+
+            <p class="text-muted">Created on: @item.CreateDate.ToString("g")</p>
         </div>
     }
 }

@@ -30,6 +30,27 @@ namespace PCForum.Controllers
             return View(discussions);
         }
 
+        public async Task<IActionResult> GetDiscussion(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var discussion = await _context.Discussion
+                .Include(d => d.Comments) 
+                .FirstOrDefaultAsync(d => d.DiscussionId == id);
+
+            if (discussion == null)
+            {
+                return NotFound();
+            }
+
+            return View(discussion); 
+        }
+
+
+
         public IActionResult Privacy()
         {
             return View();

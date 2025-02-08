@@ -21,6 +21,8 @@ namespace PCForum.Models
         public IFormFile? ImageFile { get; set; }
 
         public DateTime CreateDate { get; set; } = DateTime.Now;
+
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }
 

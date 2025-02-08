@@ -1,47 +1,34 @@
 ﻿@model IEnumerable<PCForum.Models.Comment>
 
 @{
-    ViewData["Title"] = "Discussion Space";
+    ViewData["Title"] = "Comments";
 }
 
-<h1>Discussion Space</h1>
+<h1>Comments</h1>
+
+<!-- Back to GetDiscussion Button -->
+<a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@ViewBag.DiscussionId" class="btn btn-secondary mb-3">
+    Back to Discussion
+</a>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-controller="Comments" asp-action="Create" asp-route-discussionId="@ViewBag.DiscussionId" class="btn btn-primary">Add New Comment</a>
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Discussion)
-            </th>
-            <th></th>
+            <th>Comment</th>
+            <th>Date</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Discussion.DiscussionId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CommentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CommentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CommentId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Content)</td>
+                <td>@item.CreateDate.ToString("g")</td>
+            </tr>
+        }
     </tbody>
 </table>

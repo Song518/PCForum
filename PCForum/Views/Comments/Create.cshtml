@@ -1,8 +1,14 @@
 ﻿@model PCForum.Models.Comment
 
+@{
+    ViewData["Title"] = "Add a Comment";
+}
+
 <h2>Add a Comment</h2>
 
-<form asp-action="Create">
+<form asp-controller="Comments" asp-action="Create" method="post">
+    @Html.AntiForgeryToken() <!-- CSRF protection -->
+    <!-- Ensure DiscussionId is included -->
     <input type="hidden" asp-for="DiscussionId" />
 
     <div class="form-group">
@@ -14,8 +20,11 @@
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
+<!-- Back to Comments Button -->
+<a asp-controller="Comments" asp-action="Index" asp-route-discussionId="@Model.DiscussionId" class="btn btn-secondary mt-3">
+    Back to Comments
+</a>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }
